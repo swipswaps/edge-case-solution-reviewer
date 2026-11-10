@@ -17,12 +17,17 @@ THE VERDICTS
 SANDBOX BOUNDARY
 ----------------
 
-The reviewer executes candidates in node:vm. The Node.js documentation states
-plainly: "The node:vm module is not a security mechanism. Do not use it to run
-untrusted code." https://nodejs.org/api/vm.html
+Each candidate case runs in a child process with a wall-clock timeout and a
+128 MB heap cap. Node's vm timeout covers only the definition, not the later
+call, so an infinite loop inside a candidate would otherwise hang the review.
 
-The candidates in solutions/index.mjs are authored and committed. A production
-reviewer running model-generated candidates would need a subprocess boundary.
+When the Node permission model is available, the child may read only this
+repository; filesystem writes, network and child processes are denied.
+https://nodejs.org/api/permissions.html
+
+node:vm is still not a security boundary (https://nodejs.org/api/vm.html); the
+process edge and the permission model are. For hostile code, put a container or
+VM in front of this process.
 
 RUN IT
 ------
@@ -70,5 +75,5 @@ KNOWN LIMITS
 
 - JavaScript only.
 - Hidden cases are not exhaustive.
-- node:vm is not a security boundary.
+- node:vm is not a security boundary; the child process and permission model are.
 - No style, complexity or explanation judgement.

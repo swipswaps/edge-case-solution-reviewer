@@ -1,7 +1,7 @@
-import { runCase } from './run.mjs'
+import { runCaseIsolated } from './sandbox.mjs'
 export function reviewCandidate(problem, candidate) {
-  const visible = problem.visibleTests.map((c) => ({ case: c, result: runCase(problem.id, candidate.code, c) }))
-  const hidden = problem.hiddenCases.map((c) => ({ case: c, result: runCase(problem.id, candidate.code, c) }))
+  const visible = problem.visibleTests.map((c) => ({ case: c, result: runCaseIsolated(problem.id, candidate.code, c) }))
+  const hidden = problem.hiddenCases.map((c) => ({ case: c, result: runCaseIsolated(problem.id, candidate.code, c) }))
   const visiblePass = visible.every((v) => v.result.status === 'pass')
   const hiddenPass = hidden.every((h) => h.result.status === 'pass')
   const anyThrow = visible.some((v) => v.result.status === 'threw') || hidden.some((h) => h.result.status === 'threw')
